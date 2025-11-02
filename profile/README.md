@@ -1,2 +1,2 @@
-![Portal Mobilemed App](assets/portal-mobilemed-app.png)
+![Portal Mobilemed App](../assets/portal-mobilemed-app.png)
 
