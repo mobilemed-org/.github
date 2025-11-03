@@ -1,6 +1,19 @@
-# Todos os arquivos exigem revisão de @dev1 e @dev2
-* @VitorMartinezz @mmcarvaxd @The-Fool-Coding @caisoc200
+# Code Default Owners
 
-# Apenas o time de dados revisa notebooks
-/mm-pacs-dicom-web-viewer-frontend/ @The-Fool-Coding
-/mm-pacs-portal-api/ @andre-mobilemed @tais-mobilemed
+# Vitor Martinez 
+* @VitorMartinezz 
+ # Matheus Martins 
+* @mmcarvaxd 
+ # David Conde 
+* @The-Fool-Coding 
+ # Caio Danielli 
+* @caisoc200
+
+# Teams Owners
+
+
+# Feature Team
+* @mobilemed-org/feature-team/reviewers
+
+# Integration Team
+* @mobilemed-org/integration-team/reviewers
