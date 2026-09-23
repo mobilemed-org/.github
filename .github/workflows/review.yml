@@ -37,15 +37,15 @@ jobs:
 
           Objectives:
           1) Re-check existing review comments and reply resolved when addressed
-          2) Review the current PR diff and flag only clear, high-severity issues
-          3) Leave very short inline comments (1-2 sentences) on changed lines only and a brief summary at the end
+          2) Review the ENTIRE current PR diff, including every removed line, and flag every real issue found (not only high-severity ones)
+          3) Leave short inline comments (1-2 sentences) on added AND removed lines (see Removed code rules) and a brief summary at the end
           Procedure:
           - Get existing comments: gh pr view --json comments
           - Get diff: gh pr diff
           - Check preview/draft responses to existing comments and factor them into your assessment
           - If a previously reported issue appears fixed by nearby changes, reply: ✅ Este problema parece ter sido resolvido pelas mudanças recentes
           - If a previously reported issue appears fixed by nearby changes or has a comment explaining why it was not fixed, reply: ✅ Este problema parece ter sido resolvido pelas mudanças recentes ou o problema foi explicado e não foi resolvido
-          - The review must focus strictly on code quality and best practices, not on business logic, functional correctness, or rule negotiation.
+          - The review must focus on code quality and best practices, not on business logic or rule negotiation. EXCEPTION: removal of existing functionality is never trivial and MUST always be flagged (see Removed code rules).
             - Class structure and organization:
             - Variable usage and scope
             - Proper null and undefined checks
@@ -57,11 +57,21 @@ jobs:
             - Obligate to add logger in the code
             - Does not complain if there is return code unreachable
 
-          Avoid commenting on product behavior, business requirements, or subjective stylistic choices.
+          Avoid commenting on product behavior, business requirements, or subjective stylistic choices (removals of functionality are always in scope).
           - Avoid duplicates: skip if similar feedback already exists on or near the same lines
+          Removed code rules (MANDATORY - removals are never trivial):
+          - Analyze EVERY removed line (lines starting with - in the diff), not only added lines
+          - Any removed endpoint or route (e.g. router.get/post/put/patch/delete, app.get/post, controller actions, @Get/@Post/@Put/@Delete decorators, [HttpGet]/[HttpPost] attributes, GraphQL resolvers), exported function, public method, service, job, cron, queue/event handler, migration, env/config key or UI route/screen MUST be flagged as 🚨 Crítico, even if it looks unused and even if it is mixed with comment/documentation cleanup
+          - For each removal, search the codebase for remaining references (callers, routes, front-end calls, tests) and state in the comment whether it is still referenced
+          - Comment directly on the removed line using the pull request review API with side LEFT and the line number of the base version (e.g. gh api repos/OWNER/REPO/pulls/NUMBER/reviews with comments[].side=LEFT); if that is not possible, anchor it on the nearest remaining line of the same file
+          - List every removed endpoint/function in the summary under a section Remoções de código; if none, write explicitly: Nenhuma remoção de código funcional identificada
+          Camouflaged issues (MANDATORY):
+          - Review every changed file individually; never skip a file because the diff is large, generated or mostly documentation
+          - If gh pr diff is too large or truncated, list files with gh pr diff --name-only and review each one with git diff PR_BASE_SHA...PR_HEAD_SHA -- FILE (SHAs from Context)
+          - When a file has many removed or moved lines (docs/comment cleanup, Swagger/annotation moves, refactors, file splits), compare the executable code before and after ignoring comments and whitespace, so real code changes cannot hide among documentation changes
           Commenting rules:
-          - Max 10 inline comments total; prioritize the most critical issues
-          - One issue per comment; place on the exact changed line
+          - There is NO limit on the number of comments: report every issue found, ordered by severity; never omit an issue because of diff size or comment count
+          - One issue per comment; place on the exact changed line (added lines on side RIGHT, removed lines on side LEFT)
           - Natural tone, specific and actionable; do not mention automated or high-confidence
           - Para cada comentário, inclua uma sugestão concisa de como corrigir o problema apontado
           - Use emojis: 🚨 Crítico 🔒 Segurança ⚡ Performance ⚠️ Lógica ✅ Resolvido ✨ Melhoria
