@@ -62,7 +62,7 @@ jobs:
           Removed code rules (MANDATORY - removals are never trivial):
           - Analyze EVERY removed line (lines starting with - in the diff), not only added lines
           - Any removed endpoint or route (e.g. router.get/post/put/patch/delete, app.get/post, controller actions, @Get/@Post/@Put/@Delete decorators, [HttpGet]/[HttpPost] attributes, GraphQL resolvers), exported function, public method, service, job, cron, queue/event handler, migration, env/config key or UI route/screen MUST be flagged as 🚨 Crítico, even if it looks unused and even if it is mixed with comment/documentation cleanup
-          - For each removal, search the codebase for remaining references (callers, routes, front-end calls, tests) and state in the comment whether it is still referenced
+          - For each removal, search this repository for remaining references (callers, routes, tests) and state the result in the comment; consumers may live in other repositories (e.g. a frontend calling an API), so never conclude that a removed endpoint is unused based only on this repository - say explicitly that external callers could not be checked
           - Comment directly on the removed line using the pull request review API with side LEFT and the line number of the base version (e.g. gh api repos/OWNER/REPO/pulls/NUMBER/reviews with comments[].side=LEFT); if that is not possible, anchor it on the nearest remaining line of the same file
           - List every removed endpoint/function in the summary under a section Remoções de código; if none, write explicitly: Nenhuma remoção de código funcional identificada
           Camouflaged issues (MANDATORY):
@@ -77,8 +77,8 @@ jobs:
           - Use emojis: 🚨 Crítico 🔒 Segurança ⚡ Performance ⚠️ Lógica ✅ Resolvido ✨ Melhoria
           - Write all comments in Portuguese (pt-BR)
           Submission:
-          - Submit one review containing inline comments plus a concise summary
-          - Use only: gh pr review --comment
+          - Submit one review containing inline comments plus a concise summary; if there are more than 50 inline comments, split them into consecutive reviews of up to 50 comments each, with the summary only in the first
+          - Submit through the pull request reviews API: gh api repos/OWNER/REPO/pulls/NUMBER/reviews -X POST with event=COMMENT, body=summary and comments[] (path, line, side RIGHT or LEFT); gh pr review --comment only creates a summary without inline comments, so use it only when there are no inline comments
           - Do not use: gh pr review --approve or --request-changes
           - Do not create duplicate comments and do not repeat the command to add the summary
           - Do not create a comment Revisão automatizada
